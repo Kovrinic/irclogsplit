@@ -26,10 +26,10 @@ def main(argv):
 def usage():
     print """
     NAME
-        irc_log_split
+        irclogsplit
 
     SYNOPSIS
-        irc_log_split [options] <file>
+        irclogsplit [options] <file>
 
     DESCRIPTION
         irc_log_split is a utility to break up long irc log files into
@@ -43,7 +43,7 @@ def usage():
 
 def version():
     print """
-    irc_log_split | Version 1.0.0
+    irclogsplit | Version 1.0.0
     By: Matthew Rotfuss
     """
 
@@ -95,9 +95,6 @@ def split_logs(filename):
     start_time = get_dtime(larray[0])
     log_file = setup_path(irc_name, start_time)
 
-    #if os.path.exist(log_file):
-        #print '%s already exist. Skipping' %log_file
-    #else:
     nf = open(log_file, 'r+')
 
     for line in larray:
@@ -126,8 +123,6 @@ def split_logs(filename):
     print '* Finished spliting \"%s\"' %filename
     print '*' * 80
     return
-
-#split_logs('irc.freenode.#beocat.weechatlog')
 
 if __name__ == "__main__":
     main(sys.argv[1:])
