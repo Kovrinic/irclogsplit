@@ -6,9 +6,7 @@ import sys, getopt
 
 def main(argv):
     inputfile = ''
-    outfolder = ''
     try:
-        #opts, args = getopt.getopt(argv, 'hi:Vo:', ['help', 'version', 'ifile', 'ofile'])
         opts, args = getopt.getopt(argv, 'hi:V', ['help', 'version', 'ifile'])
     except getopt.GetoptError:
         usage()
@@ -22,10 +20,8 @@ def main(argv):
             sys.exit()
         elif opt in ('-i', '--ifile'):
             inputfile = arg
-        #elif opt in ('-o', '--ofile'):
-            #outfolder = arg
 
-    split_logs(inputfile, outfolder)
+    split_logs(inputfile)
 
 def usage():
     print """
@@ -41,14 +37,13 @@ def usage():
 
     OPTIONS
         -i, --ifile <file>      - Input file
-        -o, --ofile <path>      - Output path (not yet implemented)
         -h, --help              - Display this help message and exit
         -V, --version           - Dispaly program version and exit
     """
 
 def version():
     print """
-    irclogsplit | Version 1.0.1
+    irclogsplit | Version 1.0.0
     By: Matthew Rotfuss
     """
 
@@ -58,11 +53,8 @@ def get_dtime(line):
 def file_name(dtime):
     return '%02d-%02d.log' %(dtime.month, dtime.day)
 
-def setup_path(irc_name, date_time, outpath=None):
-    if outpath:
-        year_folder = os.path.join(outpath, str(date_time.year))
-    else:
-        year_folder = str(date_time.year)
+def setup_path(irc_name, date_time):
+    year_folder = str(date_time.year)
     irc_folder = os.path.join(year_folder, irc_name)
     log_file = os.path.join(irc_folder, file_name(date_time))
 
@@ -80,16 +72,10 @@ def setup_path(irc_name, date_time, outpath=None):
 
 def get_irc_name(f):
     irc_name = f.name.split('.')[2]
-    """
-    if not irc_name.startswith('#'):
-        irc_name = '#' + irc_name
-    elif '##' in irc_name:
-        irc_name = irc_name.replace('##', '#')
-    """
     print '* irc name = %s' %irc_name
     return irc_name
 
-def split_logs(filename, outpath=None):
+def split_logs(filename):
     print '*' * 80
     if not filename:
         print '* \"%s\" is not a valid input file'
@@ -103,7 +89,7 @@ def split_logs(filename, outpath=None):
     larray = irc_file.splitlines()
 
     start_time = get_dtime(larray[0])
-    log_file = setup_path(irc_name, start_time, outpath)
+    log_file = setup_path(irc_name, start_time)
 
     nf = open(log_file, 'r+')
 
@@ -112,7 +98,7 @@ def split_logs(filename, outpath=None):
         if current_time.day >= (start_time.day + 1):
             start_time = current_time
             # create new log file location and file
-            new_log_file = setup_path(irc_name, start_time, outpath)
+            new_log_file = setup_path(irc_name, start_time)
 
             # close previouse file
             nf.close()
