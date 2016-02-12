@@ -8,8 +8,7 @@ def main(argv):
     inputfile = ''
     outfolder = ''
     try:
-        #opts, args = getopt.getopt(argv, 'hi:Vo:', ['help', 'version', 'ifile', 'ofile'])
-        opts, args = getopt.getopt(argv, 'hi:V', ['help', 'version', 'ifile'])
+        opts, args = getopt.getopt(argv, 'hi:Vo:', ['help', 'version', 'ifile', 'opath'])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -22,8 +21,8 @@ def main(argv):
             sys.exit()
         elif opt in ('-i', '--ifile'):
             inputfile = arg
-        #elif opt in ('-o', '--ofile'):
-            #outfolder = arg
+        elif opt in ('-o', '--opath')
+            outfolder = arg
 
     split_logs(inputfile, outfolder)
 
@@ -41,7 +40,7 @@ def usage():
 
     OPTIONS
         -i, --ifile <file>      - Input file
-        -o, --ofile <path>      - Output path (not yet implemented)
+        -o, --opath <path>      - Output path
         -h, --help              - Display this help message and exit
         -V, --version           - Dispaly program version and exit
     """
@@ -58,8 +57,15 @@ def get_dtime(line):
 def file_name(dtime):
     return '%02d-%02d.log' %(dtime.month, dtime.day)
 
+def absFilePath(directory):
+    """this returns a generator object, so not usefull at the moment"""
+    for dirpath,_,filenames in os.walk(directory):
+        for f in filenames:
+            yield os.path.abspath(os.path.join(dirpath, f))
+
 def setup_path(irc_name, date_time, outpath=None):
     if outpath:
+        #year_folder = os.path.join(absFilePath(outpath), str(date_time.year))
         year_folder = os.path.join(outpath, str(date_time.year))
     else:
         year_folder = str(date_time.year)
@@ -79,13 +85,8 @@ def setup_path(irc_name, date_time, outpath=None):
     return log_file
 
 def get_irc_name(f):
+    """need to change for input files that are paths"""
     irc_name = f.name.split('.')[2]
-    """
-    if not irc_name.startswith('#'):
-        irc_name = '#' + irc_name
-    elif '##' in irc_name:
-        irc_name = irc_name.replace('##', '#')
-    """
     print '* irc name = %s' %irc_name
     return irc_name
 
